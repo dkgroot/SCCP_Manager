@@ -1,13 +1,5 @@
 <?php
 
-/**
- *
- * Core Comsnd Interface
- *
- *  https://www.voip-info.org/asterisk-manager-example-php/
- */
-/* !TODO!: Re-Indent this file.  -TODO-: What do you mean? coreaccessinterface  ??  */
-
 namespace FreePBX\modules\Sccp_manager\aminterface;
 
 class AMIException extends \Exception
@@ -17,7 +9,6 @@ class AMIException extends \Exception
 
 abstract class Message
 {
-
     const EOL = "\r\n";
     const EOM = "\r\n\r\n";
 
@@ -34,7 +25,6 @@ abstract class Message
     public function getResponseHandler()
     {
         if (strlen($this->_responseHandler) > 0) {
-//            throw new AMIException('Hier:' . $this->_responseHandler);
             return (string) $this->_responseHandler;
         } else {
             return "";
@@ -58,10 +48,6 @@ abstract class Message
     {
         $key = strtolower($key);
         $this->variables[$key] = $value;
-        /*        print_r('<br>----Set Value -------<br>');
-          print_r($key);
-          print_r($value);
-         */
     }
 
     public function getVariable($key)
@@ -78,12 +64,6 @@ abstract class Message
     {
         $key = strtolower((string) $key);
         $this->keys[$key] = (string) $value;
-        /*
-          print_r('<br>----Set Key -------<br>');
-          print_r($key);
-          print_r($value);
-         *
-         */
     }
 
     public function getKey($key)
@@ -92,7 +72,6 @@ abstract class Message
         if (!isset($this->keys[$key])) {
             return null;
         }
-        //return (string)$this->keys[$key];
         return $this->keys[$key];
     }
 
@@ -268,7 +247,6 @@ abstract class IncomingMessage extends Message
     }
 }
 
-// namespace FreePBX\modules\Sccp_manager\aminterface\Message;
 class LoginAction extends ActionMessage
 {
 

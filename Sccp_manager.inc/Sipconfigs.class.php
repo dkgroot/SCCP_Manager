@@ -6,7 +6,7 @@
 
 namespace FreePBX\modules\Sccp_manager;
 
-class sipconfigs
+class Sipconfigs
 {
 //    protected $database;
 //    protected $freepbx;

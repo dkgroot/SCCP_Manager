@@ -15,16 +15,16 @@ global $db;
 global $amp_conf;
 global $astman;
 global $version;
-global $srvinterface;
+global $Srvinterface;
 global $mobile_hw;
 $mobile_hw = '0';
 
-$class = "\\FreePBX\\Modules\\Sccp_manager\\srvinterface";
+$class = "\\FreePBX\\Modules\\Sccp_manager\\Srvinterface";
 if (!class_exists($class, false)) {
-    include(__DIR__ . "/Sccp_manager.inc/srvinterface.class.php");
+    include(__DIR__ . "/Sccp_manager.inc/Srvinterface.class.php");
 }
 if (class_exists($class, false)) {
-    $srvinterface = new $class();
+    $Srvinterface = new $class();
 }
 
 function Get_DB_config($sccp_compatible)
@@ -445,11 +445,11 @@ function CheckAsteriskVersion()
 
 function CheckChanSCCPCompatible()
 {
-    global $srvinterface, $astman;
+    global $Srvinterface, $astman;
     if (!$astman) {
         ie_freepbx('No asterisk manager connection provided!. Installation Failed');
     }
-    $sccp_compatible = $srvinterface->get_compatible_sccp();
+    $sccp_compatible = $Srvinterface->getSccpVersionCode();
     outn("<li>" . _("Sccp model Compatible code : ") . $sccp_compatible . "</li>");
     return $sccp_compatible;
 }

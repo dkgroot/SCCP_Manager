@@ -1,17 +1,8 @@
 <?php
 
-/**
- *
- * Core Comsnd Interface
- *
- *  https://www.voip-info.org/asterisk-manager-example-php/
- */
-/* !TODO!: Re-Indent this file.  -TODO-: What do you mean? coreaccessinterface  ??  */
-
 namespace FreePBX\modules\Sccp_manager\aminterface;
 
 // ************************************************************************** Event  *********************************************
-
 abstract class Event extends IncomingMessage
 {
 
@@ -27,7 +18,6 @@ abstract class Event extends IncomingMessage
         parent::__construct($rawContent);
         $this->_events = array();
         $this->_eventsCount = 0;
-//        $this->_completed = !$this->isList();
     }
 }
 
@@ -36,7 +26,6 @@ class UnknownEvent extends Event
     public function __construct($rawContent = '')
     {
         print_r($rawContent);
-//        die();
     }
 }
 
@@ -124,7 +113,6 @@ class SCCPShowDeviceComplete_Event extends Event
     {
         parent::__construct($rawContent);
         $this->_completed = $this->getKey('EventList');
-//        return null;
     }
 }
 

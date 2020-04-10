@@ -1,13 +1,5 @@
 <?php
 
-/**
- *
- * Core Comsnd Interface
- *
- *  https://www.voip-info.org/asterisk-manager-example-php/
- */
-/* !TODO!: Re-Indent this file.  -TODO-: What do you mean? coreaccessinterface  ??  */
-
 namespace FreePBX\modules\Sccp_manager;
 
 class oldinterface
@@ -34,10 +26,10 @@ class oldinterface
 
 
     /*
-     *    Replace or dublicate to AMI interface
+     *    Replace or duplicate to AMI interface
      */
 
-    public function sccp_core_commands($params = array())
+    public function amiCommandSwitch($params = array())
     {
         global $astman;
         $cmd_list = array('get_softkey' => array('cmd' => "sccp show softkeyssets", 'param' => ''),
@@ -45,7 +37,7 @@ class oldinterface
             'get_device' => array('cmd' => "sccp show devices", 'param' => ''),
             'get_dev_info' => array('cmd' => "sccp show device", 'param' => 'name'),
             'get_hints' => array('cmd' => "core show hints", 'param' => ''),
-            'sccp_reload' => array('cmd' => "sccp reload force", 'param' => ''),
+            'sccpReload' => array('cmd' => "sccp reload force", 'param' => ''),
             'reset_phone' => array('cmd' => "sccp reset ", 'param' => 'name'), // Жесткая перезагрузка
             'restart_phone' => array('cmd' => "sccp restart ", 'param' => 'name'),
             'reload_phone' => array('cmd' => "sccp reload device ", 'param' => 'name'),
@@ -92,12 +84,12 @@ class oldinterface
         return $result;
     }
 
-    public function sccp_getdevice_info($dev_id)
+    public function getSccpDeviceInformation($dev_id)
     {
         if (empty($dev_id)) {
             return array();
         }
-        $res = $this->sccp_core_commands(array('cmd' => 'get_dev_info', 'name' => $dev_id));
+        $res = $this->amiCommandSwitch(array('cmd' => 'get_dev_info', 'name' => $dev_id));
         $res1 = str_replace(array("\r\n", "\r", "\n"), ';', strip_tags((string) $res['data']));
         if (strpos($res1, 'MAC-Address')) {
             $res2 = substr($res1, 0, strpos($res1, '+--- Buttons '));
@@ -134,10 +126,10 @@ class oldinterface
      * A function should be used in the form of buttons for getting all hint. Not working. I don't know how to use properly.
      */
 
-    public function sccp_list_hints()
+    public function getHints()
     {
         $hint_key = array();
-        $hint_all = $this->sccp_list_all_hints();
+        $hint_all = $this->getAllHints();
         foreach ($hint_all as $value) {
             $res = $this->loc_after('@', $value);
 //           array_search($res, $hint_key)) != NULL)
@@ -148,9 +140,9 @@ class oldinterface
         return $hint_key;
     }
 
-    public function sccp_list_all_hints()
+    public function getAllHints()
     {
-        $ast_out = $this->sccp_core_commands(array('cmd' => 'get_hints'));
+        $ast_out = $this->amiCommandSwitch(array('cmd' => 'get_hints'));
         $ast_out = preg_split("/[\n]/", $ast_out['data']);
         $ast_key = array();
         for ($i = 0; $i < 3; $i++) {
@@ -180,7 +172,7 @@ class oldinterface
     public function sccp_realtime_status()
     {
         $ast_res = array();
-        $ast_out = $this->sccp_core_commands(array('cmd' => 'get_realtime_status'));
+        $ast_out = $this->amiCommandSwitch(array('cmd' => 'get_realtime_status'));
         $ast_out = preg_split("/[\n]/", $ast_out['data']);
         if (strpos($ast_out[0], 'Privilege') !== false) {
             $ast_out[0] = "";
@@ -197,9 +189,9 @@ class oldinterface
 // !TODO!: -TODO-: install.php is still using the other version number. This is actually where I use another method ?
 
 
-    public function get_compatible_sccp()
+    public function getSccpCompatible()
     {
-        $res = $this->getSCCPVersion();
+        $res = $this->getSccpVersion();
         if (empty($res)) {
             return 0;
         }
@@ -228,9 +220,9 @@ class oldinterface
 //        return $res["vCode"];
     }
 
-    public function getSCCPVersion()
+    public function getSccpVersion()
     {
-        $res = $this->getChanSCCPVersion();
+        $res = $this->getChanSccpVersion();
         if (empty($res)) {
             $res = $this->getCoreSCCPVersion();
         }
@@ -264,7 +256,7 @@ class oldinterface
 
     private function sccp_version()
     {
-        $ast_out = $this->sccp_core_commands(array('cmd' => 'get_version'));
+        $ast_out = $this->amiCommandSwitch(array('cmd' => 'get_version'));
         if (($ast_out['Response'] == 'Error') ||  (strpos($ast_out['data'], 'No such command') != false)) {
             return array('-1');
         }
@@ -276,7 +268,7 @@ class oldinterface
         }
     }
 
-    function getChanSCCPVersion()
+    function getChanSccpVersion()
     {
         global $astman;
         $result = array();
@@ -348,9 +340,9 @@ class oldinterface
         return $result;
     }
 
-    public function sccp_list_keysets()
+    public function getSoftkeySets()
     {
-        $ast_out = $this->sccp_core_commands(array('cmd' => 'get_softkey'));
+        $ast_out = $this->amiCommandSwitch(array('cmd' => 'get_softkey'));
 
         $ast_out = preg_split("/[\n]/", $ast_out['data']);
         $ast_key = array();
@@ -375,9 +367,9 @@ class oldinterface
         return $ast_key;
     }
 
-    public function sccp_get_active_device()
+    public function getRegisteredDevices()
     {
-        $ast_out = $this->sccp_core_commands(array('cmd' => 'get_device'));
+        $ast_out = $this->amiCommandSwitch(array('cmd' => 'get_device'));
 
         $ast_out = preg_split("/[\n]/", $ast_out['data']);
 
@@ -427,7 +419,7 @@ class oldinterface
     }
 
     /*
-     *  Replace  sccp_core_commands($params = array()) {
+     *  Replace  amiCommandSwitch($params = array()) {
      */
 
     private function astman_retrieveJSFromMetaData($segment = "")

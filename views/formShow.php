@@ -43,12 +43,12 @@ $model_list = array();
 $device_list = array();
 $dialplan_list = array();
         
-//$time_zone = \FreePBX::Sccp_manager()-> extconfigs-> getextConfig('cisco_time');
+//$time_zone = \FreePBX::Sccp_manager()-> Extconfigs-> getextConfig('cisco_time');
 //$system_time_zone = \FreePBX::Sccp_manager()->getSysnemTimeZone();
-//$sofkey_list = \FreePBX::Sccp_manager()-> srvinterface -> sccp_list_keysets();
-//$model_list = \FreePBX::Sccp_manager()->dbinterface->get_db_SccpTableData("HWDevice");
-//$extension_list = \FreePBX::Sccp_manager()->dbinterface->get_db_SccpTableData("HWextension");
-//$device_list = \FreePBX::Sccp_manager()->dbinterface->get_db_SccpTableData("SccpDevice");
+//$sofkey_list = \FreePBX::Sccp_manager()-> Srvinterface -> getSoftkeySets();
+//$model_list = \FreePBX::Sccp_manager()->Db->getTableData("HWDevice");
+//$extension_list = \FreePBX::Sccp_manager()->Db->getTableData("HWextension");
+//$device_list = \FreePBX::Sccp_manager()->Db->getTableData("SccpDevice");
 //$extension_list[]=array(model=>'NONE', vendor=>'CISCO', dns=>'0');
 //$device_list[]=array(name=>'NONE', description=>'No Device');
 
@@ -434,7 +434,7 @@ foreach ($items as $child) {
         }
         if ($child['type'] == 'SLK') {
             if (empty($sofkey_list)) {
-                $sofkey_list = \FreePBX::Sccp_manager()-> srvinterface -> sccp_list_keysets();
+                $sofkey_list = \FreePBX::Sccp_manager()-> Srvinterface -> getSoftkeySets();
             }
             $select_opt= $sofkey_list;
         }
@@ -659,26 +659,26 @@ foreach ($items as $child) {
         }
         if ($child['type'] == 'SDM') {
             if (empty($model_list)) {
-                $model_list = \FreePBX::Sccp_manager()->dbinterface->get_db_SccpTableData("HWDevice");
+                $model_list = \FreePBX::Sccp_manager()->Db->getTableData("HWDevice");
             }
             $select_opt= $model_list;
         }
         if ($child['type'] == 'SDMS') {
             if (empty($model_list)) {
-                $model_list = \FreePBX::Sccp_manager()->dbinterface->get_db_SccpTableData("HWSipDevice");
+                $model_list = \FreePBX::Sccp_manager()->Db->getTableData("HWSipDevice");
             }
             $select_opt= $model_list;
         }
         if ($child['type'] == 'SDE') {
             if (empty($extension_list)) {
-                $extension_list = \FreePBX::Sccp_manager()->dbinterface->get_db_SccpTableData("HWextension");
+                $extension_list = \FreePBX::Sccp_manager()->Db->getTableData("HWextension");
                 $extension_list[]=array(model=>'NONE', vendor=>'CISCO', dns=>'0');
             }
             $select_opt= $extension_list;
         }
         if ($child['type'] == 'SDD') {
             if (empty($device_list)) {
-                $device_list = \FreePBX::Sccp_manager()->dbinterface->get_db_SccpTableData("SccpDevice");
+                $device_list = \FreePBX::Sccp_manager()->Db->getTableData("SccpDevice");
                 $device_list[]=array(name=>'NONE', description=>'No Device');
             }
             $select_opt = $device_list;

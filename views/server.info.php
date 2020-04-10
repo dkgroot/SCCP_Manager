@@ -9,8 +9,8 @@ $test_ami = 0;
 $test_any = 0;
 
 $driver = $this->FreePBX->Core->getAllDriversInfo();
-$core = $this->srvinterface->getSCCPVersion();
-$ast_realtime = $this->srvinterface->sccp_realtime_status();
+$core = $this->Srvinterface->getSccpVersion();
+$ast_realtime = $this->Srvinterface->getRealtimeStatus();
 
 $ast_realm = (empty($ast_realtime['sccp']) ? '' : 'sccp');
 
@@ -22,17 +22,17 @@ foreach ($ast_realtime as $key => $value) {
     }
 }
 
-$conf_realtime = $this->extconfigs->validate_RealTime($ast_realm);
-$db_Schema = $this->dbinterface->validate();
-$mysql_info = $this->dbinterface->get_db_sysvalues();
-$compatible = $this->srvinterface->get_compatible_sccp();
+$conf_realtime = $this->Extconfigs->validateRealtime($ast_realm);
+$db_Schema = $this->Db->validate();
+$mysql_info = $this->Db->getEngineSettings();
+$compatible = $this->Srvinterface->getSccpVersionCode();
 $info = array();
 
-$info['srvinterface'] = $this->srvinterface->info();
-$info['extconfigs'] = $this->extconfigs->info();
-$info['dbinterface'] = $this->dbinterface->info();
+$info['Srvinterface'] = $this->Srvinterface->info();
+$info['Extconfigs'] = $this->Extconfigs->info();
+$info['Db'] = $this->Db->info();
 $info['aminterface'] = $this->aminterface->info();
-$info['XML'] = $this->xmlinterface->info();
+$info['XML'] = $this->Xmlinterface->info();
 $info['sccp_class'] = $driver['sccp'];
 $info['Core_sccp'] = array('Version' => $core['Version'], 'about' => 'Sccp ver.' . $core['Version'] . ' r' . $core['vCode'] . ' Revision :' . $core['RevisionNum'] . ' Hash :' . $core['RevisionHash']);
 $info['Asterisk'] = array('Version' => FreePBX::Config()->get('ASTVERSION'), 'about' => 'Asterisk.');
@@ -104,7 +104,7 @@ if ($mysql_info['Value'] <= '2000') {
 
 // Check Time Zone comatable
 $conf_tz = $this->sccpvalues['ntp_timezone']['data'];
-$cisco_tz = $this->extconfigs->getextConfig('sccp_timezone', $conf_tz);
+$cisco_tz = $this->Extconfigs->getextConfig('sccp_timezone', $conf_tz);
 if ($cisco_tz['offset'] == 0) {
     if (!empty($conf_tz)) {
         $tmp_dt = new DateTime(null, new DateTimeZone($conf_tz));
@@ -195,11 +195,11 @@ if ($test_any == 1) {
 //$a = new \FreePBX\modules\Sccp_manager\aminterface\CommandAction('core show hints');
 /*
   $time_start = microtime_float();
-  print_r($this->srvinterface->t_get_ami_data());
+  print_r($this->Srvinterface->t_get_ami_data());
   $time_get_dl = microtime_float()-$time_start;
   print_r('<br> Delta :');  print_r($time_get_dl);
   $time_start = microtime_float();
-  $tmp_data = $this->aminterface->sccp_get_active_device();   print_r($tmp_data);
+  $tmp_data = $this->aminterface->getRegisteredDevices();   print_r($tmp_data);
   $time_get_dl = microtime_float()-$time_start;
   print_r('<br> Delta :');  print_r($time_get_dl);
 
@@ -211,10 +211,10 @@ if ($test_any == 1) {
 //   $a = new \FreePBX\modules\Sccp_manager\aminterface\SCCPConfigMetaDataAction();
 //   $response = $this->aminterface->send($a);
 //
-//  $response = $this->aminterface->getRealTimeStatus();
+//  $response = $this->aminterface->getRealtimeStatus();
 //  $time_get_a = microtime_float();
 //  print_r($response);
-//  $tmp_data = $this->aminterface->core_sccp_reload();
+//  $tmp_data = $this->aminterface->sccpReload();
 //  print_r($tmp_data);
 //  print_r($response -> getResult());
 //    $events = $response->getEvents();
@@ -222,9 +222,9 @@ if ($test_any == 1) {
 //
 //  print_r($events);
 //  print_r('--- RESULT A -----------------');
-//  $b = $this->oldinterface->sccp_realtime_status();
+//  $b = $this->oldinterface->getRealtimeStatus();
 //  print_r($b);
-//  $b = $this->srvinterface->sccp_realtime_status();
+//  $b = $this->Srvinterface->getRealtimeStatus();
 //  print_r($response->getMessage());
 //  print_r($a);
 //  $events = $response ->getTableNames();
@@ -239,7 +239,7 @@ if ($test_any == 1) {
 
 /*
  */
-//  $tmp_data = $this->aminterface->sccp_get_active_device();
+//  $tmp_data = $this->aminterface->getRegisteredDevices();
 //  print_r($tmp_data);
 }
 
@@ -256,13 +256,13 @@ if ($test_ami == 1) {
     $tmp_test_name = 'get_version';
     print_r('<br>-------------- OLD: ' . $tmp_test_name . '---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->oldinterface->get_compatible_sccp();
+    $tmp_data = $this->oldinterface->getSccpVersionCode();
     print_r($tmp_data);
-    $tmp_data = $this->oldinterface->getSCCPVersion();
+    $tmp_data = $this->oldinterface->getSccpVersion();
     print_r($tmp_data);
-    $tmp_data = $this->oldinterface->getChanSCCPVersion();
+    $tmp_data = $this->oldinterface->getChanSccpVersion();
     print_r($tmp_data);
-    $tmp_data = $this->oldinterface->sccp_realtime_status();
+    $tmp_data = $this->oldinterface->getRealtimeStatus();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
 
@@ -273,12 +273,12 @@ if ($test_ami == 1) {
 
     print_r('<br>-------------- AMI: ' . $tmp_test_name . ' ---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->srvinterface->get_compatible_sccp();
+    $tmp_data = $this->Srvinterface->getSccpVersionCode();
     print_r($tmp_data);
     print_r('<br>Not Use<br>');
-    $tmp_data = $this->srvinterface->getChanSCCPVersion();
+    $tmp_data = $this->Srvinterface->getChanSccpVersion();
     print_r($tmp_data);
-    $tmp_data = $this->srvinterface->sccp_realtime_status();
+    $tmp_data = $this->Srvinterface->getRealtimeStatus();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['ami'] = $time_get_dl - $time_get_start;
@@ -289,7 +289,7 @@ if ($test_ami == 1) {
     $tmp_test_name = 'getdevice_info';
     print_r('<br>-------------- OLD: ' . $tmp_test_name . '---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->oldinterface->sccp_getdevice_info('SEP00070E36555C');
+    $tmp_data = $this->oldinterface->getSccpDeviceInformation('SEP00070E36555C');
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['old'] = $time_get_dl - $time_get_start;
@@ -298,7 +298,7 @@ if ($test_ami == 1) {
 
     print_r('<br>-------------- AMI: ' . $tmp_test_name . ' ---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->srvinterface->sccp_getdevice_info('SEP00070E36555C');
+    $tmp_data = $this->Srvinterface->getSccpDeviceInformation('SEP00070E36555C');
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['ami'] = $time_get_dl - $time_get_start;
@@ -308,7 +308,7 @@ if ($test_ami == 1) {
     $tmp_test_name = 'get_active_device';
     print_r('<br>-------------- OLD: ' . $tmp_test_name . '---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->oldinterface->sccp_get_active_device();
+    $tmp_data = $this->oldinterface->getRegisteredDevices();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['old'] = $time_get_dl - $time_get_start;
@@ -317,17 +317,17 @@ if ($test_ami == 1) {
 
     print_r('<br>-------------- AMI: ' . $tmp_test_name . ' ---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->aminterface->sccp_get_active_device();
+    $tmp_data = $this->aminterface->getRegisteredDevices();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['ami'] = $time_get_dl - $time_get_start;
     print_r('<br> Delta :');
     print_r($time_get_dl - $time_get_start);
 
-    $tmp_test_name = 'sccp_list_keysets';
+    $tmp_test_name = 'getSoftkeySets';
     print_r('<br>-------------- OLD: ' . $tmp_test_name . '---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->oldinterface->sccp_list_keysets();
+    $tmp_data = $this->oldinterface->getSoftkeySets();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['old'] = $time_get_dl - $time_get_start;
@@ -335,7 +335,7 @@ if ($test_ami == 1) {
     print_r($time_get_dl - $time_get_start);
     print_r('<br>-------------- AMI: ' . $tmp_test_name . ' ---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->aminterface->sccp_list_keysets();
+    $tmp_data = $this->aminterface->getSoftkeySets();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['ami'] = $time_get_dl - $time_get_start;
@@ -345,7 +345,7 @@ if ($test_ami == 1) {
     $tmp_test_name = 'list_all_hints';
     print_r('<br>-------------- OLD: ' . $tmp_test_name . '---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->oldinterface->sccp_list_all_hints();
+    $tmp_data = $this->oldinterface->getAllHints();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['old'] = $time_get_dl - $time_get_start;
@@ -353,17 +353,17 @@ if ($test_ami == 1) {
     print_r($time_get_dl - $time_get_start);
     print_r('<br>-------------- AMI: ' . $tmp_test_name . ' ---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->aminterface->core_list_all_hints();
+    $tmp_data = $this->aminterface->getAllHints();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['ami'] = $time_get_dl - $time_get_start;
     print_r('<br> Delta :');
     print_r($time_get_dl - $time_get_start);
 
-    $tmp_test_name = 'sccp_list_hints';
+    $tmp_test_name = 'getHints';
     print_r('<br>-------------- OLD: ' . $tmp_test_name . '---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->oldinterface->sccp_list_hints();
+    $tmp_data = $this->oldinterface->getHints();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['old'] = $time_get_dl - $time_get_start;
@@ -371,7 +371,7 @@ if ($test_ami == 1) {
     print_r($time_get_dl - $time_get_start);
     print_r('<br>-------------- AMI: ' . $tmp_test_name . ' ---------------------------<br>');
     $time_get_start = microtime_float();
-    $tmp_data = $this->aminterface->core_list_hints();
+    $tmp_data = $this->aminterface->getHints();
     print_r($tmp_data);
     $time_get_dl = microtime_float();
     $test_info[$tmp_test_name]['ami'] = $time_get_dl - $time_get_start;
@@ -422,25 +422,25 @@ if ($test_ami == 1) {
 //  print_r($this->aminterface->close());
 //
 //
-//print_r($this->dbinterface->get_db_SccpTableData('SccpExtension'));
-//  print_r($this->srvinterface->getеtestChanSCC());
-//  $test_data = $this->srvinterface-> astman_GetRaw('ExtensionStateList');
+//print_r($this->Db->getTableData('SccpExtension'));
+//  print_r($this->Srvinterface->getеtestChanSCC());
+//  $test_data = $this->Srvinterface-> astman_GetRaw('ExtensionStateList');
 //  print_r($test_data);
-//  print_r($this->srvinterface-> core_list_all_exten());
+//  print_r($this->Srvinterface-> getExtensions());
 //  print_r($this->getHintInformation());
 //  print_r($this->aminterface->open());
-//  print_r($this->aminterface-> core_list_all_exten('exten'));
+//  print_r($this->aminterface-> getExtensions('exten'));
 //  print_r($this->aminterface->Sok_param['total']);
-//  print_r($this->srvinterface->t_get_meta_data());
+//  print_r($this->Srvinterface->t_get_meta_data());
 //  print_r($this->sccp_metainfo);
 print(" ");
 /* */
 // ************************************************************************************
-//   $lang_arr =  $this->extconfigs->getextConfig('sccp_lang','sk_SK');
+//   $lang_arr =  $this->Extconfigs->getextConfig('sccp_lang','sk_SK');
 //   print_r('<br>');
 //   print_r(timezone_identifiers_list());
 //   print_r('<br>');
-//print_r($this->dbinterface->info());
+//print_r($this->Db->info());
 
 if (!empty($this->info_warning)) {
     ?>    

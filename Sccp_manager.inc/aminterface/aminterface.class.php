@@ -1,18 +1,9 @@
 <?php
 
-/**
- *
- * Core Comsnd Interface
- *
- *  https://www.voip-info.org/asterisk-manager-example-php/
- */
-/* !TODO!: Re-Indent this file.  -TODO-: What do you mean? coreaccessinterface  ??  */
-
 namespace FreePBX\modules\Sccp_manager;
 
 class aminterface
 {
-
     var $_socket;
     var $_error;
     var $_config;
@@ -54,21 +45,15 @@ class aminterface
         $this->_socket = false;
         $this->_connect_state = false;
         $this->_error = array();
-        $this->_config = array('host' => 'localhost', 'user' => '', 'pass' => '', 'port' => '5038', 'tsoket' => 'tcp://', 'timeout' => 30, 'enabled' => false);
-        
-        
+        $this->_config = array('host' => 'localhost', 'user' => '', 'pass' => '', 'port' => '5038', 'socket' => 'tcp://', 'timeout' => 30, 'enabled' => true);
         $this->_eventListeners = array();
-//  $this->_eventFactory = new EventFactoryImpl(\Logger::getLogger('EventFactory'));
-//  $this->_responseFactory = new ResponseFactoryImpl(\Logger::getLogger('ResponseFactory'));
         $this->_incomingQueue = array();
         $this->_lastActionId = false;
         
         $fld_conf = array('user' => 'AMPMGRUSER', 'pass' => 'AMPMGRPASS');
-        if (isset($amp_conf['AMPMGRUSER'])) {
-            foreach ($fld_conf as $key => $value) {
-                if (isset($amp_conf[$value])) {
-                    $this->_config[$key] = $amp_conf[$value];
-                }
+        foreach ($fld_conf as $key => $value) {
+            if (isset($amp_conf[$value])) {
+                $this->_config[$key] = $amp_conf[$value];
             }
         }
         if ($this->_config['enabled']) {
@@ -99,11 +84,10 @@ class aminterface
 
     /**
      * Opens a tcp connection to ami.
-     *
      */
     public function open()
     {
-        $cString = $this->_config['tsoket'] . $this->_config['host'] . ':' . $this->_config['port'];
+        $cString = $this->_config['socket'] . $this->_config['host'] . ':' . $this->_config['port'];
         $this->_context = stream_context_create();
         $errno = 0;
         $errstr = '';
@@ -163,7 +147,6 @@ class aminterface
         $this->_msgToDebug(90, 'Time: '. ($time_connect));
         while (1) {
             stream_set_timeout($this->_socket, 1);
-//            stream_set_timeout($this->_socket, (isset($this->socket_param['timeout']) ? $this->socket_param['timeout'] : 1));
             $this->process();
             $time_co = microtime_float();
             $this->_msgToDebug(90, 'Time: '. ($time_co-$time_connect));
@@ -257,8 +240,6 @@ class aminterface
 
                 if ($event != null) {
                     $response = $this->findResponse($event);
-//                    print_r($response);
-//                    print_r('<br>--- E2 Response Type 2 ----------<br>');
                     
                     if ($response === false || $response->isComplete()) {
                         $this->dispatch($event);  // не работает
@@ -267,8 +248,6 @@ class aminterface
                     }
                 }
             } else {
-                // broken ami.. sending a response with events without
-                // Event and ActionId
                 $this->_msgToDebug(1, 'resp broken ami');
                 $bMsg = 'Event: ResponseEvent' . "\r\n";
                 $bMsg .= 'ActionId: ' . $this->_lastActionId . "\r\n" . $aMsg;
@@ -277,7 +256,6 @@ class aminterface
                 $response->addEvent($event);
             }
         }
-//        print_r('<br>--- EProcecc ----------<br>');
     }
 
     private function _msgToDebug($level, $msg)
@@ -292,15 +270,7 @@ class aminterface
 
     private function _msgToResponse($msg)
     {
-        //      print_r("<br>------------hmsg----------<br>");
-        //      print_r($this->_lastActionClass);
-//        print_r($this->_lastRequestedResponseHandler);
-//        print_r("<br>------------emsg----------<br>");
-//        print_r($msg);
         $response = $this->_msgFromRaw($msg, $this->_lastActionClass, $this->_lastRequestedResponseHandler);
-//        print_r("<br>------------rmsg----------<br>");
-        //      print_r($response);
-//        print_r("<br>------------ermsg----------<br>");
 
         $actionId = $response->getActionId();
         if ($actionId === null) {
@@ -309,11 +279,6 @@ class aminterface
         }
         return $response;
     }
-
-    /*
-     *
-     *
-     */
 
     public function _msgFromRaw($message, $requestingaction = false, $responseHandler = false)
     {
@@ -342,9 +307,8 @@ class aminterface
     }
 
     /*
-     *    Replace or dublicate to AMI interface
+     *    Replace or duplicate to AMI interface
      */
-
     public function _eventFromRaw($message)
     {
         $eventStart = strpos($message, 'Event: ') + 7;
@@ -365,7 +329,7 @@ class aminterface
         return new $className($message);
     }
 
-    public function _respnceFromRaw($message, $requestingaction = false, $responseHandler = false)
+    public function _responseFromRaw($message, $requestingaction = false, $responseHandler = false)
     {
 
         $responseclass = '\\FreePBX\\modules\\Sccp_manager\\aminterface\\Response';
@@ -389,7 +353,6 @@ class aminterface
         return new $responseclass($message);
     }
 
-//    protected function findResponse(IncomingMessage $message) {
     protected function findResponse($message)
     {
         $actionId = $message->getActionId();
@@ -424,16 +387,20 @@ class aminterface
         print_r("<br>------------E dispatch----------<br>");
     }
 
-//-------------------------------------------------------------------------------
-    function core_list_all_exten($keyfld = '', $filter = array())
+    /**
+     * !TODO!: 
+     * these following functions don't belong in a library class (i think)
+     * and they seem be just wrapping simple constructs
+     */
+
+    // this function doesn't do anything (it just passes the given 'filter' array back to the caller)
+    function getExtensions($keyfld = '', $filter = array())
     {
         $result = array();
         return $result;
     }
 
-//-------------------Adaptive Function ------------------------------------------------------------
-
-    function core_list_hints()
+    function getHints()
     {
         $result = array();
         if ($this->_connect_state) {
@@ -449,7 +416,7 @@ class aminterface
         return $result;
     }
 
-    function core_list_all_hints()
+    function getAllHints()
     {
         $result = array();
         if ($this->_connect_state) {
@@ -464,8 +431,8 @@ class aminterface
         }
         return $result;
     }
-// --------------------- SCCP Comands
-    function sccp_list_keysets()
+
+    function getSoftkeySets()
     {
         $result = array();
         if ($this->_connect_state) {
@@ -478,7 +445,7 @@ class aminterface
         }
         return $result;
     }
-    function sccp_get_active_device()
+    function getRegisteredDevices()
     {
         $result = array();
         if ($this->_connect_state) {
@@ -491,7 +458,7 @@ class aminterface
         }
         return $result;
     }
-    function sccp_getdevice_info($devicename)
+    function getSccpDeviceInformation($devicename)
     {
         $result = array();
         if ($this->_connect_state) {
@@ -518,8 +485,7 @@ class aminterface
         return $result;
     }
 
-//------------------- Core Comands ----
-    function core_sccp_reload()
+    function sccpReload()
     {
         $result = array();
         if ($this->_connect_state) {
@@ -530,7 +496,7 @@ class aminterface
         }
         return $result;
     }
-    function getSCCPVersion()
+    function getSccpVersion()
     {
         $result = array();
         if ($this->_connect_state) {
@@ -541,7 +507,7 @@ class aminterface
         return $result;
     }
 
-    function getRealTimeStatus()
+    function getRealtimeStatus()
     {
         $result = array();
         if ($this->_connect_state) {

@@ -1,17 +1,9 @@
 <?php
 
-/**
- *
- * Core Comsnd Interface
- *
- *
- */
-
 namespace FreePBX\modules\Sccp_manager;
 
-class dbinterface
+class Db
 {
-
     private $val_null = 'NONE'; /// REPLACE to null Field
 
     public function __construct($parent_class = null)
@@ -29,10 +21,10 @@ class dbinterface
     /*
      * Core Access Function
      */
-    public function get_db_SccpTableByID($dataid, $data = array(), $indexField = '')
+    public function getTableById($dataid, $data = array(), $indexField = '')
     {
         $resut = array();
-        $raw = $this->get_db_SccpTableData($dataid, $data);
+        $raw = $this->getTableData($dataid, $data);
         if (empty($raw) || empty($indexField)) {
             return $raw;
         }
@@ -43,7 +35,7 @@ class dbinterface
         return $resut;
     }
 
-    public function get_db_SccpTableData($dataid, $data = array())
+    public function getTableData($dataid, $data = array())
     {
         if ($dataid == '') {
             return false;
@@ -105,13 +97,13 @@ class dbinterface
                 }
                 break;
             case "HWSipDevice":
-                $raw_settings = $this->getDb_model_info($get = "sipphones", $format_list = "model");
+                $raw_settings = $this->getModelInfo($get = "sipphones", $format_list = "model");
                 break;
             case "HWDevice":
-                $raw_settings = $this->getDb_model_info($get = "ciscophones", $format_list = "model");
+                $raw_settings = $this->getModelInfo($get = "ciscophones", $format_list = "model");
                 break;
             case "HWextension":
-                $raw_settings = $this->getDb_model_info($get = "extension", $format_list = "model");
+                $raw_settings = $this->getModelInfo($get = "extension", $format_list = "model");
                 break;
             case "get_colums_sccpdevice":
                 $sql = "DESCRIBE sccpdevice";
@@ -156,14 +148,14 @@ class dbinterface
         return $raw_settings;
     }
 
-    public function get_db_SccpSetting()
+    public function getSettings()
     {
         $sql = "SELECT `keyword`, `data`, `type`, `seq` FROM `sccpsettings` ORDER BY `type`, `seq`";
         $raw_settings = sql($sql, "getAll", DB_FETCHMODE_ASSOC);
         return $raw_settings;
     }
 
-    public function get_db_sysvalues()
+    public function getEngineSettings()
     {
         $sql = "SHOW VARIABLES LIKE '%group_concat%'";
         $raw_settings = sql($sql, "getRow", DB_FETCHMODE_ASSOC);
@@ -174,7 +166,7 @@ class dbinterface
      *      Get Sccp Device Model information
      */
 
-    function getDb_model_info($get = "all", $format_list = "all", $filter = array())
+    function getModelInfo($get = "all", $format_list = "all", $filter = array())
     {
         global $db;
         switch ($format_list) {
@@ -342,7 +334,7 @@ class dbinterface
      *  My be Replace by SccpTables ??!
      *
      */
-    public function dump_sccp_tables($data_path, $database, $user, $pass)
+    public function dumpTables($data_path, $database, $user, $pass)
     {
         $filename = $data_path.'/sccp_backup_'.date('G_a_m_d_y').'.sql';
         $result = exec('mysqldump '.$database.' --password='.$pass.' --user='.$user.' --single-transaction >'.$filename, $output);

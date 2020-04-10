@@ -6,7 +6,7 @@
 
 namespace FreePBX\modules\Sccp_manager;
 
-class extconfigs
+class Extconfigs
 {
 
     public function __construct($parent_class = null)
@@ -33,7 +33,7 @@ class extconfigs
             case 'sccpDefaults':
                 $result = $this->sccpDefaults;
                 break;
-            case 'sccp_timezone_offset': // Sccp manafer: 1400 (+ Id) :2007 (+ Id)
+            case 'sccp_timezone_offset': // Sccp manager: 1400 (+ Id) :2007 (+ Id)
                 if (empty($index)) {
                     return 0;
                 }
@@ -47,7 +47,7 @@ class extconfigs
                 return $tmp_ofset / 60;
                 
                 break;
-            case 'sccp_timezone': // Sccp manafer: 1400 (+ Id) :2007 (+ Id)
+            case 'sccp_timezone': // Sccp manager: 1400 (+ Id) :2007 (+ Id)
                 $result = array();
                 
                 if (empty($index)) {
@@ -124,17 +124,14 @@ class extconfigs
 
     private $sccpDefaults = array(
         "servername" => 'VPBXSCCP',
-        "bindaddr" => '0.0.0.0', "port" => '2000', # chan_sccp also supports ipv6
-        # bindaddr = "::" will support ipv6 and ipv4 at the same time
+        "bindaddr" => '0.0.0.0', // chan_sccp also supports ipv6
+        // bindaddr = "::" will support ipv6 and ipv4 at the same time
+        "port" => '2000',
         "deny" => '0.0.0.0/0.0.0.0',
-        "permit" => '0.0.0.0/0.0.0.0', # !TODO!: please change this to 'internal' which would mean:
-        # permit:127.0.0.0/255.0.0.0,permit:10.0.0.0/255.0.0.0,permit:172.0.0.0/255.224.0.0,permit:192.168.0.0/255.255.0.0"
-        "dateformat" => 'D.M.Y', # This is the german default format. Should be "D/M/Y" or "D/M/YA" instead
+        "permit" => 'internal',
+        "dateformat" => 'M-D-Y',
         "disallow" => 'all', "allow" => 'alaw;ulaw',
         "hotline_enabled" => 'off',
-        "hotline_context" => 'default', # !TODO!: Should this not be from-internal on FreePBX ?
-        "hotline_extension" => '*60', # !TODO!: Is this a good default extension to dial for hotline ?
-        "hotline_label" => 'hotline',
         "devicetable" => 'sccpdevice',
         "linetable" => 'sccpline',
         "tftp_path" => '/tftpboot'
@@ -415,7 +412,7 @@ class extconfigs
         return $base_config;
     }
 
-    public function validate_RealTime($realm = '')
+    public function validateRealtime($realm = '')
     {
         global $amp_conf;
         $res = array();
