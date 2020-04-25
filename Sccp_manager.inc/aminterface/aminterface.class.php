@@ -219,9 +219,9 @@ class aminterface
         $this->_msgToDebug(90, $msgs);
         $this->_countE++;
         if ($this->_countE > 10000) {
-            $this->_msgToDebug(9, '--- Procecc Die, Dump --- ');
+            $this->_msgToDebug(9, '--- Process Die, Dump --- ');
             $this->_msgToDebug(9, $this->_DumpMessage);
-            $this->_msgToDebug(9, '--- END Procecc Die, Dump --- ');
+            $this->_msgToDebug(9, '--- END Process Die, Dump --- ');
             die();
         }
         foreach ($msgs as $aMsg) {
@@ -492,7 +492,9 @@ class aminterface
             $_action = new \FreePBX\modules\Sccp_manager\aminterface\ReloadAction('chan_sccp');
 //            $_action = new \FreePBX\modules\Sccp_manager\aminterface\CommandAction('sccp reload force'); // No Response Result !!
             $_response = $this->send($_action);
-            $result = $_response->getMessage();
+            //$result = $_response->getMessage();
+            $result['data'] = 'Result: '.$_response->getMessage();
+            $result['Response'] = $_response->getMessage();
         }
         return $result;
     }
