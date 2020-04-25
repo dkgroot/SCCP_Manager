@@ -1250,7 +1250,7 @@ and open the template in the editor. Base Version before all crash :-)
         </item>
 
         <item type="IS" id="4" seq="90">
-            <name>system_rouminguser</name> 
+            <name>system_roaminguser</name> 
             <label>User Roaming</label>
             <default>no</default>
             <button value="yes">Yes</button>

@@ -12,7 +12,7 @@
   $dom->parentNode->removeChild($dom);
   }
 
-  function replaceSimpleXmlNode($xml, SimpleXMLElement $element) {
+  function replaceSimpleNode($xml, SimpleXMLElement $element) {
   $dom     = dom_import_simplexml($xml);
   $import  = $dom->ownerDocument->importNode(
   dom_import_simplexml($element),TRUE

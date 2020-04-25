@@ -5,10 +5,10 @@
  * and open the template in the editor.
  */
 // vim: set ai ts=4 sw=4 ft=phtml:
-$roming_enable = '';
-if (!empty($this->sccpvalues['system_rouminguser'])) {
-    if ($this->sccpvalues['system_rouminguser']['data'] == 'yes') {
-        $roming_enable = 'yes';
+$roaming_enable = '';
+if (!empty($this->sccpvalues['system_roaminguser'])) {
+    if ($this->sccpvalues['system_roaminguser']['data'] == 'yes') {
+        $roaming_enable = 'yes';
     }
 }
 ?>
@@ -41,7 +41,7 @@ if (!empty($this->sccpvalues['system_rouminguser'])) {
 <script>
     function DispayPhoneActionsKeyFormatter(value, row, index) {
         var exp_dev = '';
-        var rmn_dev = '<?php echo $roming_enable ?>';
+        var rmn_dev = '<?php echo $roaming_enable ?>';
         exp_dev += '<a href="config.php?display=extensions&amp;extdisplay=' + row['name'] + '"><i class="fa fa-pencil"></i></a> &nbsp;';
         exp_dev += '<a class="clickable delete" data-id="' + row['name'] + '"><i class="fa fa-trash"></i></a>';
         if (rmn_dev == 'yes') {

@@ -30,7 +30,7 @@ class Xmlinterface
             'about' => 'Create XML data interface ver: ' . $Ver);
     }
 
-    function create_default_XML($store_path = '', $data_values = array(), $model_information = array(), $lang_info = array())
+    function createDefault($store_path = '', $data_values = array(), $model_information = array(), $lang_info = array())
     {
         $data_path = $data_values['tftp_path'];
         if (empty($store_path) || empty($data_path) || empty($data_values)) {
@@ -46,7 +46,7 @@ class Xmlinterface
         if (file_exists($xml_template)) {
             $xml_work = simplexml_load_file($xml_template);
             $xnode = &$xml_work->callManagerGroup->members;
-            $bind_tmp = $this->get_server_sccp_bind($data_values);
+            $bind_tmp = $this->getSccpServerBindAddress($data_values);
             //error_log("bind_tmp:".print_r($bind_tmp, true), 0);
             $ifc = 0;
             foreach ($bind_tmp as $bind_value) {
@@ -56,14 +56,14 @@ class Xmlinterface
                 $xnode_obj->callManager->ports->ethernetPhonePort = $bind_value['port'];
                 $xnode_obj->callManager->processNodeName = $bind_value['ip'];
                 if ($ifc === 0) {
-                    $this->replaceSimpleXmlNode($xnode->member, $xnode_obj);
+                    $this->replaceSimpleNode($xnode->member, $xnode_obj);
                 } else {
-                    $this->appendSimpleXmlNode($xnode->member, $xnode_obj);
+                    $this->appendSimpleNode($xnode->member, $xnode_obj);
                 }
                 $ifc++;
             }
 
-            $this->replaceSimpleXmlNode($xml_work->callManagerGroup->members, $xnode);
+            $this->replaceSimpleNode($xml_work->callManagerGroup->members, $xnode);
 
             foreach ($def_xml_fields as $value) {
                 if (!empty($data_values['dev_' . $value])) {
@@ -94,7 +94,7 @@ class Xmlinterface
                                 $xnode->name = '';
                                 $xnode->langCode = '';
                             }
-//                            $this -> replaceSimpleXmlNode($xml_work->$key,$xnode);
+//                            $this -> replaceSimpleNode($xml_work->$key,$xnode);
                             break;
                         case 'networkLocale':
                             $lang = $data_values['netlang'];
@@ -105,7 +105,7 @@ class Xmlinterface
                             }
                             break;
                     }
-                    //$this-> replaceSimpleXmlNode($xml_work->$value, $xnode );
+                    //$this-> replaceSimpleNode($xml_work->$value, $xnode );
                 }
             }
 
@@ -119,7 +119,7 @@ class Xmlinterface
         }
     }
 
-    function create_SEP_XML($store_path = '', $data_values = array(), $dev_config = array(), $dev_id = '', $lang_info = array())
+    function createSccpDevice($store_path = '', $data_values = array(), $dev_config = array(), $dev_id = '', $lang_info = array())
     {
         $var_xml_general_fields = array('authenticationurl' => 'dev_authenticationURL', 'informationurl' => 'dev_informationURL', 'messagesurl' => 'dev_messagesURL',
             'servicesurl' => 'dev_servicesURL', 'directoryurl' => 'dev_directoryURL', 'idleurl' => 'dev_idleURL', 
@@ -236,7 +236,7 @@ class Xmlinterface
                                     break;
                                 case 'callmanagergroup':    
                                     $xnode = &$xml_node->$dkey->members;
-                                    $bind_tmp = $this->get_server_sccp_bind($data_values);
+                                    $bind_tmp = $this->getSccpServerBindAddress($data_values);
                                     $ifc = 0;
                                     foreach ($bind_tmp as $bind_value) {
                                         $xnode_obj = clone $xnode->member;
@@ -252,9 +252,9 @@ class Xmlinterface
                                         }
 
                                         if ($ifc === 0) {
-                                            $this->replaceSimpleXmlNode($xnode->member, $xnode_obj);
+                                            $this->replaceSimpleNode($xnode->member, $xnode_obj);
                                         } else {
-                                            $this->appendSimpleXmlNode($xnode->member, $xnode_obj);
+                                            $this->appendSimpleNode($xnode->member, $xnode_obj);
                                         }
                                         $ifc++;
                                     }
@@ -284,9 +284,9 @@ class Xmlinterface
                                   $xnode_obj->callManager->ports->ethernetPhonePort = $data_values['port'];
                                   $xnode_obj->callManager->processNodeName = $value['ip'];
                                   if ($ifc === 0) {
-                                  $this->replaceSimpleXmlNode($xnode->member, $xnode_obj);
+                                  $this->replaceSimpleNode($xnode->member, $xnode_obj);
                                   } else {
-                                  $this->appendSimpleXmlNode($xnode->member, $xnode_obj);
+                                  $this->appendSimpleNode($xnode->member, $xnode_obj);
                                   }
                                   $ifc ++;
                                   }
@@ -304,7 +304,7 @@ class Xmlinterface
                                  */
                             }
                         }
-                        $this->replaceSimpleXmlNode($xml_work->$key, $xml_node);
+                        $this->replaceSimpleNode($xml_work->$key, $xml_node);
                         break;
                     case 'vendorconfig':
                         $xml_node = $xml_work->$key;
@@ -318,7 +318,7 @@ class Xmlinterface
                                 }
                             }
                         }
-                        $this->replaceSimpleXmlNode($xml_work->$key, $xml_node);
+                        $this->replaceSimpleNode($xml_work->$key, $xml_node);
                         break;
                         
                     case 'versionstamp':
@@ -346,7 +346,7 @@ class Xmlinterface
                                     $ti++;
                                 }
                             }
-//                            $this->appendSimpleXmlNode($xml_work , $xnode_obj);
+//                            $this->appendSimpleNode($xml_work , $xnode_obj);
                         }
                         break;
                     case 'commonprofile':
@@ -378,7 +378,7 @@ class Xmlinterface
                                     if ($key_l == 'userlocale') {
                                         $xml_node->winCharSet = $lang_info[$lang]['codepage'];
                                     }
-                                    $this->replaceSimpleXmlNode($xml_work->$key, $xml_node);
+                                    $this->replaceSimpleNode($xml_work->$key, $xml_node);
                                 }
                             }
                         } else {
@@ -405,7 +405,7 @@ class Xmlinterface
         return time();
     }
 
-    private function get_server_sccp_bind($data_values = array())
+    private function getSccpServerBindAddress($data_values = array())
     {
         $res = array();
         if ($data_values['bindaddr'] !== '0.0.0.0') {
@@ -459,7 +459,7 @@ class Xmlinterface
     }
 
     /*
-      private function get_server_sip_bind($data_values = array()) {
+      private function getSipServerBindAddress($data_values = array()) {
       $res = array();
 
       if (!empty($data_values['sipbind']) and ( $data_values['sipbind'] != '0.0.0.0')) {
@@ -489,7 +489,7 @@ class Xmlinterface
      *
      */
 
-    function create_SEP_SIP_XML($store_path = '', $data_values = array(), $dev_config = array(), $dev_id = '', $lang_info = array())
+    function createSipDevice($store_path = '', $data_values = array(), $dev_config = array(), $dev_id = '', $lang_info = array())
     {
 
         $var_xml_general_fields = array('authenticationURL' => 'dev_authenticationURL', 'informationURL' => 'dev_informationURL', 'messagesURL' => 'dev_messagesURL',
@@ -526,7 +526,7 @@ class Xmlinterface
             $xml_template = $data_path . '/templates/SEP0000000000.cnf.xml_79df_sip_template';
         }
         $xml_name = $store_path . '/' . $dev_id . '.cnf.xml';
-        //$sip_bind = $this->get_server_sip_bind($data_values);
+        //$sip_bind = $this->getSipServerBindAddress($data_values);
         $sip_bind = $data_values['sbind'];
         $bind_proto = 'tcp';
         $bind_ip_def = '';
@@ -631,15 +631,15 @@ class Xmlinterface
 //                                        $xnode_obj->callManager->ports->securedSipPort = $bind_value['tlsport'];
                                         $xnode_obj->callManager->processNodeName = $bind_ip;
                                         if ($ifc === 0) {
-                                            $this->replaceSimpleXmlNode($xnode->member, $xnode_obj);
+                                            $this->replaceSimpleNode($xnode->member, $xnode_obj);
                                         } else {
-                                            $this->appendSimpleXmlNode($xnode->member, $xnode_obj);
+                                            $this->appendSimpleNode($xnode->member, $xnode_obj);
                                         }
                                         $ifc++;
                                     }
                             }
                         }
-                        $this->replaceSimpleXmlNode($xml_work->$key, $xml_node);
+                        $this->replaceSimpleNode($xml_work->$key, $xml_node);
                         break;
                     case 'sipProfile':
                         $xml_node = $xml_work->$key;
@@ -684,9 +684,9 @@ class Xmlinterface
                                             }
 
                                             if ($ifc === 0) {
-                                                $this->replaceSimpleXmlNode($xnode->line, $xnode_obj);
+                                                $this->replaceSimpleNode($xnode->line, $xnode_obj);
                                             } else {
-                                                $this->appendSimpleXmlNode($xnode->line, $xnode_obj);
+                                                $this->appendSimpleNode($xnode->line, $xnode_obj);
                                             }
                                             $ifc++;
                                         }
@@ -698,7 +698,7 @@ class Xmlinterface
                                                     . '<speedDialNumber>' . $spvalue["dial"] . '</speedDialNumber>'
                                                     . '<contact>' . $spvalue["dial"] . '</contact> <retrievalPrefix /></line>';
                                             $xnode_obj = simplexml_load_string($xmlstr);
-                                            $this->appendSimpleXmlNode($xnode->line, $xnode_obj);
+                                            $this->appendSimpleNode($xnode->line, $xnode_obj);
                                             $ifc++;
                                         }
                                     }
@@ -726,7 +726,7 @@ class Xmlinterface
                                     break;
                             }
                         }
-                        $this->replaceSimpleXmlNode($xml_work->$key, $xml_node);
+                        $this->replaceSimpleNode($xml_work->$key, $xml_node);
                         break;
 
                     case 'versionStamp':
@@ -749,7 +749,7 @@ class Xmlinterface
                                 $xnode_obj->addChild('loadInformation', $add_val);
                                 $ti++;
                             }
-//                            $this->appendSimpleXmlNode($xml_work , $xnode_obj);
+//                            $this->appendSimpleNode($xml_work , $xnode_obj);
                         }
                         break;
                     case 'commonProfile':
@@ -781,7 +781,7 @@ class Xmlinterface
                                     if ($key == 'userLocale') {
                                         $xml_node->winCharSet = $lang_info[$lang]['codepage'];
                                     }
-                                    $this->replaceSimpleXmlNode($xml_work->$key, $xml_node);
+                                    $this->replaceSimpleNode($xml_work->$key, $xml_node);
                                 }
                             }
                         } else {
@@ -861,7 +861,7 @@ class Xmlinterface
         return $errors;
     }
 
-    function create_xmlSoftkeyset($config, $confDir, $name)
+    function createSoftkeySet($config, $confDir, $name)
     {
         if (empty($config[$name])) {
             if ($name == 'default') {
@@ -912,7 +912,7 @@ class Xmlinterface
         return $errors;
     }
 
-    private function replaceSimpleXmlNode($xml, $element = SimpleXMLElement)
+    private function replaceSimpleNode($xml, $element = SimpleXMLElement)
     {
         $dom = dom_import_simplexml($xml);
         $import = $dom->ownerDocument->importNode(
@@ -922,7 +922,7 @@ class Xmlinterface
         $dom->parentNode->replaceChild($import, $dom);
     }
 
-    private function appendSimpleXmlNode($xml, $element = SimpleXMLElement)
+    private function appendSimpleNode($xml, $element = SimpleXMLElement)
     {
 
         $dom = dom_import_simplexml($xml);

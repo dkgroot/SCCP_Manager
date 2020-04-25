@@ -1764,7 +1764,7 @@ class Sccp_manager extends \FreePBX_Helpers implements \BMO
     function createSccpXmlSoftkey()
     {
         foreach ($this->Srvinterface->getSoftkeySets() as $keyl => $vall) {
-            $this->Xmlinterface->create_xmlSoftkeyset($this->sccp_conf_init, $this->sccppath, $keyl);
+            $this->Xmlinterface->createSoftkeySet($this->sccp_conf_init, $this->sccppath, $keyl);
         }
     }
 
@@ -1902,7 +1902,7 @@ class Sccp_manager extends \FreePBX_Helpers implements \BMO
         $lang_data = $this->Extconfigs->getextConfig('sccp_lang');
         $data_value['tftp_path'] = $this->sccppath["tftp_path"];
 
-        $this->Xmlinterface->create_default_XML($this->sccppath["tftp_path_store"], $data_value, $model_information, $lang_data);
+        $this->Xmlinterface->createDefault($this->sccppath["tftp_path_store"], $data_value, $model_information, $lang_data);
     }
 
     /*
@@ -1974,9 +1974,9 @@ class Sccp_manager extends \FreePBX_Helpers implements \BMO
 
         $lang_data = $this->Extconfigs->getextConfig('sccp_lang');
         if (!$sccp_native) {
-            return $this->Xmlinterface->create_SEP_SIP_XML($this->sccppath["tftp_path_store"], $data_value, $dev_config, $dev_id, $lang_data);
+            return $this->Xmlinterface->createSipDevice($this->sccppath["tftp_path_store"], $data_value, $dev_config, $dev_id, $lang_data);
         }
-        return $this->Xmlinterface->create_SEP_XML($this->sccppath["tftp_path_store"], $data_value, $dev_config, $dev_id, $lang_data);
+        return $this->Xmlinterface->createSccpDevice($this->sccppath["tftp_path_store"], $data_value, $dev_config, $dev_id, $lang_data);
     }
 
     function deleteSccpDeviceXML($dev_id = '')

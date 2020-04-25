@@ -36,7 +36,7 @@ $spage = FreePBX::create()->Sccp_manager;
                                 <?php echo $page['content']?>
                             </div>
                         <?php } ?>
-                                        </div>
+                    </div>
                 </div>
             </div>
         </div>
